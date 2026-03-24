@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>2026 · Strategic Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js" defer></script>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div id="loader" class="loader"><span class="loader__leaf">🌿</span></div>
+<div id="toastContainer" class="toast-container" aria-live="polite"></div>
+
+<div class="app">
+
+  <!--  SIDEBAR  -->
+  <aside class="sidebar">
+    <div class="sidebar__top">
+      <div class="sidebar__logo">
+        <svg class="sidebar__leaf-icon" viewBox="0 0 40 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M20 44 C20 44 4 34 4 18 C4 10 12 4 20 4 C28 4 36 10 36 18 C36 34 20 44 20 44Z" fill="currentColor" opacity="0.12"/>
+          <path d="M20 44 C20 44 4 34 4 18 C4 10 12 4 20 4 C28 4 36 10 36 18 C36 34 20 44 20 44Z" stroke="currentColor" stroke-width="1.5" fill="none"/>
+          <line x1="20" y1="44" x2="20" y2="10" stroke="currentColor" stroke-width="1" opacity="0.5"/>
+          <path d="M20 28 C14 22 10 16 12 12" stroke="currentColor" stroke-width="0.8" opacity="0.4" fill="none"/>
+          <path d="M20 22 C26 18 30 14 28 10" stroke="currentColor" stroke-width="0.8" opacity="0.4" fill="none"/>
+        </svg>
+        <div>
+          <div class="sidebar__title">Strategic</div>
+          <div class="sidebar__year">Tracker · 2026</div>
+        </div>
+      </div>
+    </div>
+
+    <nav class="sidebar__nav">
+      <button class="nav-link active" data-page="dashboard">Overview</button>
+      <button class="nav-link" data-page="goals">Goals</button>
+      <button class="nav-link" data-page="languages">Languages</button>
+      <button class="nav-link nav-link--cert" data-page="certifications">Certifications</button>
+      <button class="nav-link" data-page="habits">Habits</button>
+      <button class="nav-link" data-page="weekly">Routine</button>
+      <button class="nav-link" data-page="analytics">Analytics</button>
+    </nav>
+
+    <div class="sidebar__bottom">
+      <div class="sidebar__stat-row">
+        <span class="sidebar__stat-label">Today</span>
+        <span class="sidebar__stat-val" id="sidebarToday">—</span>
+      </div>
+      <div class="sidebar__stat-row">
+        <span class="sidebar__stat-label">Best streak</span>
+        <span class="sidebar__stat-val" id="sidebarStreak">—</span>
+      </div>
+      <div class="sidebar__controls">
+        <button class="ctrl-btn" id="exportBtn" title="Export JSON">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Export
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!--  MAIN  -->
+  <main class="main" id="mainContent">
+
+    <!-- OVERVIEW -->
+    <section id="dashboard" class="page active">
+      <div class="page-head">
+        <div>
+          <p class="page-eyebrow" id="todayDate"></p>
+          <h1 class="page-title">Good morning.</h1>
+          <p class="page-sub">Here's where you stand today.</p>
+        </div>
+      </div>
+
+      <div class="metric-strip" id="metricStrip">
+        <div class="metric" data-reveal>
+          <div class="metric__num" id="goalsCompleted">0</div>
+          <div class="metric__label">Goals complete</div>
+          <div class="metric__of">of <span id="goalTotal">0</span></div>
+        </div>
+        <div class="metric-divider"></div>
+        <div class="metric" data-reveal>
+          <div class="metric__num" id="milestonesAchieved">0</div>
+          <div class="metric__label">Milestones hit</div>
+          <div class="metric__of">of <span id="milestoneTotal">0</span></div>
+        </div>
+        <div class="metric-divider"></div>
+        <div class="metric" data-reveal>
+          <div class="metric__num" id="habitsTracked">0</div>
+          <div class="metric__label">Active habits</div>
+          <div class="metric__of">daily</div>
+        </div>
+        <div class="metric-divider"></div>
+        <div class="metric metric--accent" data-reveal>
+          <div class="metric__num" id="overallProgress">0%</div>
+          <div class="metric__label">Overall progress</div>
+          <div class="metric__of">all goals</div>
+        </div>
+      </div>
+
+      <h2 class="section-heading">Priority framework</h2>
+      <div class="priority-grid" id="priorityGrid">
+        <div class="priority-card priority-card--01" data-reveal>
+          <div class="priority-card__tag">Academic</div>
+          <div class="priority-card__title">Excellence</div>
+          <div class="priority-card__desc">Thesis & coursework</div>
+          <div class="p-bar"><div class="p-bar__fill p-bar__fill--01" id="fw-academic" style="width:0%"></div></div>
+          <div class="priority-card__pct" id="fw-academic-pct">0%</div>
+        </div>
+        <div class="priority-card priority-card--02" data-reveal>
+          <div class="priority-card__tag">Spiritual</div>
+          <div class="priority-card__title">Balance</div>
+          <div class="priority-card__desc">Prayer & sport</div>
+          <div class="p-bar"><div class="p-bar__fill p-bar__fill--02" id="fw-health" style="width:0%"></div></div>
+          <div class="priority-card__pct" id="fw-health-pct">0%</div>
+        </div>
+        <div class="priority-card priority-card--03" data-reveal>
+          <div class="priority-card__tag">Career</div>
+          <div class="priority-card__title">Growth</div>
+          <div class="priority-card__desc">Skills & projects</div>
+          <div class="p-bar"><div class="p-bar__fill p-bar__fill--03" id="fw-career" style="width:0%"></div></div>
+          <div class="priority-card__pct" id="fw-career-pct">0%</div>
+        </div>
+        <div class="priority-card priority-card--04" data-reveal>
+          <div class="priority-card__tag">Personal</div>
+          <div class="priority-card__title">Enrichment</div>
+          <div class="priority-card__desc">Languages & reading</div>
+          <div class="p-bar"><div class="p-bar__fill p-bar__fill--04" id="fw-personal" style="width:0%"></div></div>
+          <div class="priority-card__pct" id="fw-personal-pct">0%</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- GOALS -->
+    <section id="goals" class="page">
+      <div class="page-head">
+        <div>
+          <p class="page-eyebrow">Track &amp; measure</p>
+          <h1 class="page-title">Goals</h1>
+        </div>
+        <button class="add-btn" id="openGoalModalBtn">+ Add goal</button>
+      </div>
+      <div class="goal-block" data-reveal>
+        <h3 class="block-label">Academic</h3>
+        <table class="t" aria-label="Academic goals">
+          <thead><tr><th>Goal</th><th>Progress</th><th>Status</th><th></th></tr></thead>
+          <tbody id="academicGoalsTable"><tr><td colspan="4" class="t-empty">No goals yet</td></tr></tbody>
+        </table>
+      </div>
+      <div class="goal-block" data-reveal>
+        <h3 class="block-label">Technical Skills</h3>
+        <table class="t" aria-label="Technical goals">
+          <thead><tr><th>Skill</th><th>Progress</th><th>Status</th><th></th></tr></thead>
+          <tbody id="technicalGoalsTable"><tr><td colspan="4" class="t-empty">No goals yet</td></tr></tbody>
+        </table>
+      </div>
+      <div class="goal-block" data-reveal>
+        <h3 class="block-label">Business &amp; Projects</h3>
+        <table class="t" aria-label="Business goals">
+          <thead><tr><th>Project</th><th>Progress</th><th>Status</th><th></th></tr></thead>
+          <tbody id="businessGoalsTable"><tr><td colspan="4" class="t-empty">No goals yet</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- LANGUAGES -->
+    <section id="languages" class="page">
+      <div class="page-head">
+        <div>
+          <p class="page-eyebrow">The 2 + 4 rule</p>
+          <h1 class="page-title">Languages</h1>
+        </div>
+        <button class="add-btn" id="openLangModalBtn">+ Add language</button>
+      </div>
+      <h3 class="block-label" style="margin-bottom:1.25rem">Active — primary focus</h3>
+      <div class="lang-grid" id="activeLanguagesGrid">
+        <p class="empty-note">Add your first active language</p>
+      </div>
+      <h3 class="block-label" style="margin:2.75rem 0 1.25rem">Maintenance</h3>
+      <div class="lang-grid" id="maintenanceLanguagesGrid">
+        <p class="empty-note">No maintenance languages yet</p>
+      </div>
+    </section>
+
+    <!-- CERTIFICATIONS -->
+    <section id="certifications" class="page">
+      <div class="page-head">
+        <div>
+          <p class="page-eyebrow">Drag to reorder · click to expand</p>
+          <h1 class="page-title">Certifications</h1>
+        </div>
+        <button class="add-btn" id="openCertModalBtn">+ Add cert</button>
+      </div>
+      <div id="certList" class="cert-list">
+        <p class="empty-note" style="padding:3rem;text-align:center">No certifications yet</p>
+      </div>
+    </section>
+
+    <!-- HABITS -->
+    <section id="habits" class="page">
+      <div class="page-head">
+        <div>
+          <p class="page-eyebrow">Build consistency</p>
+          <h1 class="page-title">Habits</h1>
+        </div>
+        <button class="add-btn" id="openHabitModalBtn">+ Add habit</button>
+      </div>
+      <div class="streak-note" id="streakBanner"></div>
+      <div class="habit-list" id="habitsGrid">
+        <p class="empty-note" style="padding:2rem 1.5rem">No habits yet — start small</p>
+      </div>
+    </section>
+
+    <!-- ROUTINE -->
+    <section id="weekly" class="page">
+      <div class="page-head">
+        <div>
+          <p class="page-eyebrow">Sun–Thu university · Fri–Sat personal</p>
+          <h1 class="page-title">Weekly Routine</h1>
+        </div>
+        <button class="add-btn" id="openWeeklyModalBtn">+ Add activity</button>
+      </div>
+      <table class="t" aria-label="Weekly routine" style="margin-top:0.5rem">
+        <thead><tr><th>Day</th><th>Time</th><th>Activity</th><th>Duration</th><th>Done</th><th></th></tr></thead>
+        <tbody id="weeklyTable"><tr><td colspan="6" class="t-empty">No activities yet</td></tr></tbody>
+      </table>
+    </section>
+
+    <!-- ANALYTICS -->
+    <section id="analytics" class="page">
+      <div class="page-head">
+        <div>
+          <p class="page-eyebrow">Visual overview</p>
+          <h1 class="page-title">Analytics</h1>
+        </div>
+      </div>
+      <div class="metric-strip">
+        <div class="metric" data-reveal><div class="metric__num" id="avgCompletion">0%</div><div class="metric__label">Avg completion</div><div class="metric__of">all goals</div></div>
+        <div class="metric-divider"></div>
+        <div class="metric" data-reveal><div class="metric__num" id="langCount">0</div><div class="metric__label">Languages</div><div class="metric__of">tracked</div></div>
+        <div class="metric-divider"></div>
+        <div class="metric" data-reveal><div class="metric__num" id="certCount">0</div><div class="metric__label">Certifications</div><div class="metric__of">in progress</div></div>
+        <div class="metric-divider"></div>
+        <div class="metric metric--accent" data-reveal><div class="metric__num" id="consistency">—</div><div class="metric__label">Today's habits</div><div class="metric__of">complete</div></div>
+      </div>
+      <div class="charts-row">
+        <div class="chart-panel" data-reveal>
+          <h3 class="block-label" style="margin-bottom:1.25rem">Completion by category</h3>
+          <div class="chart-wrap"><canvas id="completionChart"></canvas></div>
+        </div>
+        <div class="chart-panel" data-reveal>
+          <h3 class="block-label" style="margin-bottom:1.25rem">Language hours</h3>
+          <div class="chart-wrap"><canvas id="languageChart"></canvas></div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- MOBILE NAV -->
+<nav class="mob-nav">
+  <button class="mob-btn active" data-page="dashboard">Home</button>
+  <button class="mob-btn" data-page="goals">Goals</button>
+  <button class="mob-btn" data-page="languages">Lang</button>
+  <button class="mob-btn" data-page="habits">Habits</button>
+  <button class="mob-btn" data-page="analytics">Stats</button>
+</nav>
+
+<!--  MODALS  -->
+
+<div id="goalModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="t-goal">
+  <div class="modal-veil"></div>
+  <div class="modal-card">
+    <div class="modal-head"><h2 class="modal-title" id="t-goal">New goal</h2><button class="modal-x" data-close="goalModal">✕</button></div>
+    <div class="modal-body">
+      <label class="lbl" for="goalName">Name</label>
+      <input class="inp" type="text" id="goalName" placeholder="What do you want to achieve?" autocomplete="off">
+      <span class="err" id="goalName-err"></span>
+      <label class="lbl" for="goalCategory">Category</label>
+      <select class="inp" id="goalCategory">
+        <option value="">Choose…</option>
+        <option value="academic">Academic</option>
+        <option value="technical">Technical Skills</option>
+        <option value="business">Business & Projects</option>
+      </select>
+      <span class="err" id="goalCategory-err"></span>
+      <label class="lbl" for="goalProgress">Progress (%)</label>
+      <input class="inp" type="number" id="goalProgress" placeholder="0" min="0" max="100">
+      <label class="lbl" for="goalMilestone">Milestone <span class="lbl-opt">optional</span></label>
+      <input class="inp" type="text" id="goalMilestone" placeholder="Key checkpoint…" autocomplete="off">
+    </div>
+    <div class="modal-foot"><button class="btn-ghost" data-close="goalModal">Cancel</button><button class="btn-solid" id="saveGoalBtn">Add goal</button></div>
+  </div>
+</div>
+
+<div id="editGoalModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="t-eg">
+  <div class="modal-veil"></div>
+  <div class="modal-card">
+    <div class="modal-head"><h2 class="modal-title" id="t-eg">Edit goal</h2><button class="modal-x" data-close="editGoalModal">✕</button></div>
+    <div class="modal-body">
+      <input type="hidden" id="editGoalId">
+      <label class="lbl" for="editGoalName">Name</label>
+      <input class="inp" type="text" id="editGoalName" autocomplete="off">
+      <label class="lbl" for="editGoalProgress">Progress (%)</label>
+      <input class="inp" type="number" id="editGoalProgress" min="0" max="100">
+    </div>
+    <div class="modal-foot"><button class="btn-ghost" data-close="editGoalModal">Cancel</button><button class="btn-solid" id="updateGoalBtn">Save</button></div>
+  </div>
+</div>
+
+<div id="languageModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="t-lang">
+  <div class="modal-veil"></div>
+  <div class="modal-card">
+    <div class="modal-head"><h2 class="modal-title" id="t-lang">Add language</h2><button class="modal-x" data-close="languageModal">✕</button></div>
+    <div class="modal-body">
+      <label class="lbl" for="langName">Language</label>
+      <input class="inp" type="text" id="langName" placeholder="e.g. French, Japanese…" autocomplete="off">
+      <span class="err" id="langName-err"></span>
+      <label class="lbl" for="langStatus">Focus</label>
+      <select class="inp" id="langStatus">
+        <option value="active">Active — primary focus</option>
+        <option value="maintenance">Maintenance</option>
+      </select>
+      <label class="lbl" for="langLevel">Level</label>
+      <select class="inp" id="langLevel">
+        <option value="">Choose level…</option>
+        <option value="A0">A0 — Beginner</option><option value="A1">A1</option><option value="A2">A2</option>
+        <option value="B1">B1</option><option value="B2">B2</option><option value="C1">C1</option><option value="C2">C2 — Fluent</option>
+      </select>
+      <span class="err" id="langLevel-err"></span>
+      <label class="lbl" for="langHours">Hours invested</label>
+      <input class="inp" type="number" id="langHours" placeholder="0" min="0">
+    </div>
+    <div class="modal-foot"><button class="btn-ghost" data-close="languageModal">Cancel</button><button class="btn-solid" id="saveLangBtn">Add</button></div>
+  </div>
+</div>
+
+<div id="certModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="t-cert">
+  <div class="modal-veil"></div>
+  <div class="modal-card">
+    <div class="modal-head"><h2 class="modal-title" id="t-cert">Add certification</h2><button class="modal-x" data-close="certModal">✕</button></div>
+    <div class="modal-body">
+      <div class="src-tabs">
+        <button class="src-tab" data-source="custom" type="button">Custom</button>
+      </div>
+      <div id="certCustomWrap" class="gone">
+        <label class="lbl" for="certNameCustom">Name</label>
+        <input class="inp" type="text" id="certNameCustom" placeholder="Certification name…" autocomplete="off">
+      </div>
+      <span class="err" id="certName-err"></span>
+      <label class="lbl" for="certDescription">Notes <span class="lbl-opt">optional</span></label>
+      <textarea class="inp inp--ta" id="certDescription" placeholder="Why you're pursuing this, resources, key topics…" rows="3"></textarea>
+      <label class="chk-row">
+        <input type="checkbox" id="certHasHours">
+        <span class="chk-box"></span>
+        <span class="chk-lbl">Track hours for this certification</span>
+      </label>
+      <div id="certHoursWrap" class="gone">
+        <label class="lbl" for="certHours">Hours completed</label>
+        <input class="inp" type="number" id="certHours" placeholder="0" min="0">
+        <label class="lbl" for="certEstHours">Total estimated hours</label>
+        <input class="inp" type="number" id="certEstHours" placeholder="150" min="1">
+      </div>
+    </div>
+    <div class="modal-foot"><button class="btn-ghost" data-close="certModal">Cancel</button><button class="btn-solid" id="saveCertBtn">Add</button></div>
+  </div>
+</div>
+
+<div id="habitModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="t-habit">
+  <div class="modal-veil"></div>
+  <div class="modal-card">
+    <div class="modal-head"><h2 class="modal-title" id="t-habit">Add habit</h2><button class="modal-x" data-close="habitModal">✕</button></div>
+    <div class="modal-body">
+      <label class="lbl" for="habitName">Habit</label>
+      <input class="inp" type="text" id="habitName" placeholder="e.g. Morning prayer, Run 5km…" autocomplete="off">
+      <span class="err" id="habitName-err"></span>
+      <label class="lbl" for="habitCategory">Category</label>
+      <select class="inp" id="habitCategory">
+        <option value="">Choose…</option>
+        <option value="spiritual">Spiritual</option>
+        <option value="sports">Sports & Exercise</option>
+        <option value="reading">Reading</option>
+        <option value="focus">Deep Focus</option>
+        <option value="scrolling">No-Scroll Protocol</option>
+      </select>
+      <span class="err" id="habitCategory-err"></span>
+      <label class="lbl" for="habitTarget">Daily target (minutes)</label>
+      <input class="inp" type="number" id="habitTarget" placeholder="30" min="1">
+    </div>
+    <div class="modal-foot"><button class="btn-ghost" data-close="habitModal">Cancel</button><button class="btn-solid" id="saveHabitBtn">Add</button></div>
+  </div>
+</div>
+
+<div id="weeklyModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="t-wk">
+  <div class="modal-veil"></div>
+  <div class="modal-card">
+    <div class="modal-head"><h2 class="modal-title" id="t-wk">Add activity</h2><button class="modal-x" data-close="weeklyModal">✕</button></div>
+    <div class="modal-body">
+      <label class="lbl" for="weeklyDay">Day</label>
+      <select class="inp" id="weeklyDay">
+        <option value="">Choose day…</option>
+        <option>Sunday</option><option>Monday</option><option>Tuesday</option>
+        <option>Wednesday</option><option>Thursday</option><option>Friday</option><option>Saturday</option>
+      </select>
+      <span class="err" id="weeklyDay-err"></span>
+      <label class="lbl" for="weeklyTime">Time block</label>
+      <input class="inp" type="text" id="weeklyTime" placeholder="e.g. 8:00–10:00 AM" autocomplete="off">
+      <label class="lbl" for="weeklyActivity">Activity</label>
+      <input class="inp" type="text" id="weeklyActivity" placeholder="e.g. Thesis writing" autocomplete="off">
+      <span class="err" id="weeklyActivity-err"></span>
+      <label class="lbl" for="weeklyDuration">Duration (minutes)</label>
+      <input class="inp" type="number" id="weeklyDuration" placeholder="60" min="1">
+    </div>
+    <div class="modal-foot"><button class="btn-ghost" data-close="weeklyModal">Cancel</button><button class="btn-solid" id="saveWeeklyBtn">Add</button></div>
+  </div>
+</div>
+
+<canvas id="confettiCanvas" style="position:fixed;inset:0;pointer-events:none;z-index:9999"></canvas>
+<script src="script.js"></script>
+</body>
+</html>
