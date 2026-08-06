@@ -1,0 +1,19 @@
+{
+  "name": "strategic-tracker",
+  "version": "1.0.0",
+  "description": "A calm, nature-inspired personal life management dashboard and priority tracker.",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx serve ."
+  },
+  "keywords": [
+    "tracker",
+    "dashboard",
+    "habits",
+    "goals",
+    "productivity",
+    "portfolio"
+  ],
+  "author": "Strategic Tracker Team",
+  "license": "MIT"
+}
